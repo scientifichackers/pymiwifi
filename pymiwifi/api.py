@@ -62,7 +62,7 @@ class MiWiFi:
         ).json()
 
     def status(self):
-        return self.get_api_endpoint("misysyem/status")
+        return self.get_api_endpoint("misystem/status")
 
     def device_list(self):
         return self.get_api_endpoint("misystem/devicelist")
