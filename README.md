@@ -5,7 +5,13 @@ A python API to the Xiaomi Mi WiFi Router web interface
 
 ## Install
 
+[PyPI](https://pypi.org/project/pymiwifi/)
+
 `pip install pymiwifi`
+
+License: MIT<br>
+Python >= 3.6 
+
 
 ## Use
 
