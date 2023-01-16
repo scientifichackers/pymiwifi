@@ -11,6 +11,9 @@ PUBLIC_KEY = "a2ffa5c9be07488bbb04a3a47d3c5f6a"
 def sha1(x: str):
     return hashlib.sha1(x.encode()).hexdigest()
 
+def sha256(x: str):
+    return hashlib.sha256(x.encode()).hexdigest()
+
 
 def get_mac_address():
     as_hex = f"{uuid.getnode():012x}"
@@ -21,8 +24,11 @@ def generate_nonce(miwifi_type=0):
     return f"{miwifi_type}_{get_mac_address()}_{int(time.time())}_{int(random.random() * 1000)}"
 
 
-def generate_password_hash(nonce, password):
-    return sha1(nonce + sha1(password + PUBLIC_KEY))
+def generate_password_hash(nonce, password, newEncryptMode = 0):
+    sha = sha1
+    if newEncryptMode == 1:
+        sha = sha256
+    return sha(nonce + sha(password + PUBLIC_KEY))
 
 
 class MiWiFi:
@@ -33,6 +39,12 @@ class MiWiFi:
         self.address = address
         self.token = None
         self.miwifi_type = miwifi_type
+        self.newEncryptMode = 0
+        response = requests.get(
+            f"{self.address}/cgi-bin/luci/api/xqsystem/init_info"
+        ).json()
+        if "newEncryptMode" in response:
+            self.newEncryptMode = response["newEncryptMode"]
 
     def login(self, password):
         nonce = generate_nonce(self.miwifi_type)
@@ -42,7 +54,7 @@ class MiWiFi:
             data={
                 "username": "admin",
                 "logtype": "2",
-                "password": generate_password_hash(nonce, password),
+                "password": generate_password_hash(nonce, password, self.newEncryptMode),
                 "nonce": nonce,
             },
         )
