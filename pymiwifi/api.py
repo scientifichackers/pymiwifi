@@ -73,6 +73,12 @@ class MiWiFi:
             f"{self.address}/cgi-bin/luci/;stok={self.token}/api/{endpoint}"
         ).json()
 
+    def post_api_endpoint(self, endpoint, data):
+        return requests.post(
+            f"{self.address}/cgi-bin/luci/;stok={self.token}/api/{endpoint}",
+            data=data
+        ).json()
+
     def status(self):
         return self.get_api_endpoint("misystem/status")
 
